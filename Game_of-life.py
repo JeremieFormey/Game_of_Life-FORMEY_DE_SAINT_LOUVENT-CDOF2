@@ -51,13 +51,36 @@ def update_grid(grid):
                     new_grid[x, y] = 1
     return new_grid
 
-def main():
-    # Define the grid size and initial state
-    rows, cols = 20, 20
+def get_initial_configuration(rows, cols):
+    """Allows the user to set the initial configuration of the grid."""
     grid = np.zeros((rows, cols), dtype=int)
+    print("\033[93mCreate your initial configuration!\033[0m")
+    print(f"Enter cell coordinates as 'x,y' (e.g., '2,3'). Type 'done' to finish.")
+    print_grid(grid)
 
-    # Create a simple pattern (e.g., a glider)
-    grid[1, 2] = grid[2, 3] = grid[3, 1] = grid[3, 2] = grid[3, 3] = 1
+    while True:
+        user_input = input("Enter coordinates (or 'done'): ").strip()
+        if user_input.lower() == "done":
+            break
+        try:
+            x, y = map(int, user_input.split(","))
+            if 0 <= x < rows and 0 <= y < cols:
+                grid[x, y] = 1
+                clear_console()
+                print_grid(grid)
+            else:
+                print("\033[91mCoordinates out of bounds. Try again.\033[0m")
+        except ValueError:
+            print("\033[91mInvalid input. Please enter coordinates as 'x,y'.\033[0m")
+    return grid
+
+def main():
+    # Define the grid size
+    rows, cols = 20, 20
+
+    # Get the initial configuration from the user
+    clear_console()
+    grid = get_initial_configuration(rows, cols)
 
     generation = 0
     while True:
