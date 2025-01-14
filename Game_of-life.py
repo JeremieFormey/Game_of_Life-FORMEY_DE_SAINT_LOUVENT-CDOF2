@@ -7,9 +7,22 @@ def clear_console():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def print_grid(grid):
-    """Prints the grid to the console."""
-    for row in grid:
-        print(' '.join('⬛' if cell else '⬜' for cell in row))
+    """Prints the grid to the console with enhanced visuals."""
+    # Top border
+    print("   " + "━" * (grid.shape[1] * 2 + 1))
+    for i, row in enumerate(grid):
+        line = " │ "  # Left border
+        for cell in row:
+            if cell:
+                line += "\033[92m⬛\033[0m "  # Green for live cells
+            else:
+                line += "\033[90m⬜\033[0m "  # Grey for dead cells
+        line += "│"  # Right border
+        print(f"{i:2} {line}")  # Row index
+    # Bottom border
+    print("   " + "━" * (grid.shape[1] * 2 + 1))
+    # Column indices
+    print("    " + " ".join(f"{i:2}" for i in range(grid.shape[1])))
 
 def get_neighbors(grid, x, y):
     """Counts the live neighbors of a cell."""
@@ -46,11 +59,13 @@ def main():
     # Create a simple pattern (e.g., a glider)
     grid[1, 2] = grid[2, 3] = grid[3, 1] = grid[3, 2] = grid[3, 3] = 1
 
-    # Run the game
+    generation = 0
     while True:
         clear_console()
+        print(f"Game of Life - Generation {generation}")
         print_grid(grid)
         grid = update_grid(grid)
+        generation += 1
         time.sleep(0.5)  # Pause between generations
 
 if __name__ == "__main__":
