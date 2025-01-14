@@ -25,16 +25,17 @@ def print_grid(grid):
     print("    " + " ".join(f"{i:2}" for i in range(grid.shape[1])))
 
 def get_neighbors(grid, x, y):
-    """Counts the live neighbors of a cell."""
+    """Counts the live neighbors of a cell with toroidal wrapping."""
     neighbors = [
-        (x - 1, y - 1), (x - 1, y), (x - 1, y + 1),
-        (x, y - 1),             (x, y + 1),
-        (x + 1, y - 1), (x + 1, y), (x + 1, y + 1)
+        (-1, -1), (-1, 0), (-1, 1),
+        (0, -1),          (0, 1),
+        (1, -1), (1, 0), (1, 1)
     ]
     count = 0
-    for nx, ny in neighbors:
-        if 0 <= nx < grid.shape[0] and 0 <= ny < grid.shape[1]:
-            count += grid[nx, ny]
+    for dx, dy in neighbors:
+        nx = (x + dx) % grid.shape[0]  # Wrap around top/bottom
+        ny = (y + dy) % grid.shape[1]  # Wrap around left/right
+        count += grid[nx, ny]
     return count
 
 def update_grid(grid):
@@ -85,7 +86,7 @@ def main():
     generation = 0
     while True:
         clear_console()
-        print(f"Game of Life - Generation {generation}")
+        print(f"Game of Life (Toroidal Space) - Generation {generation}")
         print_grid(grid)
         grid = update_grid(grid)
         generation += 1
